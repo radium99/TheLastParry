@@ -7,6 +7,7 @@
 #include "Actor/MouseTester.h"
 #include "Render/Renderer.h"
 #include "Engine/Engine.h"
+#include "Actor/Progressbar.h"
 
 GameLevel::GameLevel()
 {
@@ -18,6 +19,9 @@ GameLevel::GameLevel()
 
 	// Test: 마우스 테스터 추가.
 	AddNewActor(new MouseTester());
+
+	// Test: 체간 게이지 표시 추가.
+	AddNewActor(new ProgressBar());
 }
 
 GameLevel::~GameLevel()

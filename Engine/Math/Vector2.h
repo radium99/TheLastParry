@@ -9,7 +9,7 @@ namespace Wanted
 	{
 	public:
 		Vector2();
-		Vector2(float x, float y);
+		Vector2(int x, int y);
 		~Vector2();
 
 		// 문자열로 변환해서 반환하는 함수.
@@ -40,8 +40,8 @@ namespace Wanted
 
 	public:
 		// x/y 좌표.
-		float x = 0;
-		float y = 0;
+		int x = 0;
+		int y = 0;
 
 	private:
 		// 벡터 값을 문자열로 변환할 때 사용할 변수.

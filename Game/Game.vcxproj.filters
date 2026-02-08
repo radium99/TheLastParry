@@ -48,7 +48,7 @@
     <ClCompile Include="Actor\Combatant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actor\PlayerPostureBar.cpp">
+    <ClCompile Include="Actor\Progressbar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClInclude Include="Actor\Combatant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Actor\PlayerPostureBar.h">
+    <ClInclude Include="Actor\Progressbar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

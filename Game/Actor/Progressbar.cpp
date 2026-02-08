@@ -1,8 +1,9 @@
 #include "Progressbar.h"
 #include "Render/Renderer.h"
 
-ProgressBar::ProgressBar(Vector2 pos, int width, char fill, char empty, Color fillColor, Color emptyColor, int sortingOrder)
-	: _position(pos),
+ProgressBar::ProgressBar(int width, char fill, char empty, Color fillColor, Color emptyColor, int sortingOrder)
+	: super(" ", Vector2(Engine::Get().GetWidth() / 2, Engine::Get().GetHeight() - 5)),
+	//_position(pos),
 	_width(width),
 	_fillChar(fill),
 	_emptyChar(empty),
@@ -14,9 +15,41 @@ ProgressBar::ProgressBar(Vector2 pos, int width, char fill, char empty, Color fi
 {
 }
 
+
 ProgressBar::~ProgressBar()
 {
 }
+
+
+void ProgressBar::Tick(float deltaTime)
+{
+	super::Tick(deltaTime);
+}
+//MouseTester::MouseTester()
+//	: super(" ", Vector2(Engine::Get().GetWidth() / 2, Engine::Get().GetHeight() - 1))
+//{
+//}
+//
+//void MouseTester::Tick(float deltaTime)
+//{
+//	super::Tick(deltaTime);
+//
+//	// 마우스 입력 테스트.
+//	if (Input::Get().GetMouseButton(0))
+//	{
+//		Vector2 mousePosition = Input::Get().MousePosition();
+//		char buffer[256] = {};
+//		sprintf_s(
+//			buffer,
+//			256,
+//			"cursor: (%f, %f)",
+//			mousePosition.x,
+//			mousePosition.y
+//		);
+//
+//		ChangeImage(buffer);
+//	}
+//}
 
 void ProgressBar::SetValue(int currentPosture, int maxPosture)
 {
@@ -33,7 +66,7 @@ void ProgressBar::Render()
 	if (filledCount > 0)
 	{
 		std::string filledString(filledCount, _fillChar);
-		Renderer::Get().Submit(filledString.c_str(), _position, _fillColor, _sortingOrder);
+		Renderer::Get().Submit(filledString.c_str(), position, _fillColor, _sortingOrder);
 	}
 
 	// 빈 부분 문자열 생성 및 제출 (채워진 부분 다음 위치로)
@@ -45,9 +78,10 @@ void ProgressBar::Render()
 		// 빈 부분은 filledCount만큼 떨어진 위치에 그려져야 함.
 		Renderer::Get().Submit(
 			emptyString.c_str(), 
-			Vector2(_position.x + filledCount, _position.y),
+			Vector2(position.x + filledCount, position.y),
 			_emptyColor,
 			_sortingOrder
 		);
 	}
 }
+

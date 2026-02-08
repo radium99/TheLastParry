@@ -6,30 +6,44 @@
 #include "Actor/EnemyDestroyEffect.h"
 #include "Core/Input.h"
 
-Enemy::Enemy(const char* image, int yPosition)
-	: super("w('W')/ ", Vector2::Zero, Color::Red, 0, 100)
+Enemy::Enemy(const char* image)
+	: super("w('W')/", Vector2::Zero, Color::Red, 0, 100)
 {
 	// 랜덤 (오른쪽 또는 왼쪽으로 이동할지 결정).
-	int random = Util::Random(1, 10);
+	//int random = Util::Random(1, 10);
+	int random = Util::Random(1,100);
 
-	if (random % 2 == 0)
+	// 테스트: 플레이어 위치와 임의로 맞춤.
+	float xVec = Engine::Get().GetWidth() / 2.0f + 1;
+	float yVec = Engine::Get().GetHeight() - 5.0f;
+
+	if (random < 33)
 	{
 		// 화면 오른쪽에서 생성. "(oOo)"
 		direction = MoveDirection::Left;
 		xPosition = static_cast<float>(
 			Engine::Get().GetWidth() - width - 1
-			);
+		);
+		yPosition = yVec;
 	}
-	else
+	else if(random  < 66)
 	{
 		// 화면 왼쪽에서 생성.
 		direction = MoveDirection::Right;
 		xPosition = 0.0f;
+		yPosition = yVec;
+	}
+	else
+	{
+		// 화면 위쪽에서 생성.
+		direction = MoveDirection::Down;
+		//xPosition = 0.0f;
+		xPosition = xVec - width - 1;
 	}
 
 	// 이동 방향에 따른 적 위치 설정.
 	SetPosition(
-		Vector2(static_cast<int>(xPosition), yPosition)
+		Vector2(static_cast<int>(xPosition), static_cast<int>(yPosition))
 	);
 
 	// 발사 타이머 목표 시간 설정.
@@ -44,10 +58,29 @@ void Enemy::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
+	// Pseudocode:
+	// 1) 판단: 방향이 Left, Right, Down 중 하나.
+	// 2) Left  -> dir = -1.0f, xPosition += moveSpeed * dir * deltaTime
+	//    Right -> dir =  1.0f, xPosition += moveSpeed * dir * deltaTime
+	//    Down  -> dir =  1.0f, yPosition += moveSpeed * dir * deltaTime
+	// 3) SetPosition 에서 yPosition을 사용해 세로 이동 반영.
+
 	// 이동 처리.
-	float dir
-		= direction == MoveDirection::Left ? -1.0f : 1.0f;
-	xPosition = xPosition + moveSpeed * dir * deltaTime;
+	if (direction == MoveDirection::Left)
+	{
+		float dir = -1.0f;
+		xPosition = xPosition + moveSpeed * dir * deltaTime;
+	}
+	else if (direction == MoveDirection::Right)
+	{
+		float dir = 1.0f;
+		xPosition = xPosition + moveSpeed * dir * deltaTime;
+	}
+	else if (direction == MoveDirection::Down)
+	{
+		float dir = 1.0f;
+		yPosition = yPosition + moveSpeed * dir * deltaTime;
+	}
 
 
 	// 좌표 검사.
@@ -65,10 +98,17 @@ void Enemy::Tick(float deltaTime)
 		return;
 	}
 
+	// 화면 아래쪽을 완전히 벗어났으면.
+	if (yPosition >= Engine::Get().GetHeight())
+	{
+		Destroy();
+		return;
+	}
+
 	// 위치 설정.
 	SetPosition(Vector2(
 		static_cast<int>(xPosition),
-		position.y
+		static_cast<int>(yPosition)
 	));
 
 	// 플레이어 체간 데미지 입력 처리.

@@ -1,6 +1,6 @@
 #pragma once
 #include "Actor/Actor.h"
-#include "Render/UI/Progressbar.h"
+#include "Actor/Progressbar.h"
 
 using namespace Wanted;
 

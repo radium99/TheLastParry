@@ -17,7 +17,7 @@ static const char* enemyType[] =
 EnemySpawner::EnemySpawner()
 {
 	// 利 积己 鸥捞赣 汲沥.
-	timer.SetTargetTime(Util::RandomRange(2.0f, 3.0f));
+	timer.SetTargetTime(Util::RandomRange(0.1f, 1.0f));
 }
 
 void EnemySpawner::Tick(float deltaTime)
@@ -54,6 +54,6 @@ void EnemySpawner::SpawnEnemy(float deltaTime)
 
 	// 利 积己 夸没.
 	GetOwner()->AddNewActor(
-		new Enemy(enemyType[index], yPosition)
+		new Enemy(enemyType[index])
 	);
 }

@@ -14,11 +14,12 @@ class Enemy : public Combatant
 	{
 		None = -1,
 		Left,
-		Right
+		Right,
+		Down
 	};
 
 public:
-	Enemy(const char* image = "(oOo)", int yPosition = 5);
+	Enemy(const char* image = "(oOo)");
 	~Enemy();
 
 	// Tick.
@@ -31,9 +32,10 @@ private:
 	// 이동 방향 열거형.
 	MoveDirection direction = MoveDirection::None;
 
-	// 좌우 이동 처리를 위한 변수.
+	// 이동 처리를 위한 변수.
 	float xPosition = 0.0f;
-	float moveSpeed = 5.0f;
+	float yPosition = 0.0f;
+	float moveSpeed = 10.0f;
 
 	// 발사 타이머.
 	Timer timer;

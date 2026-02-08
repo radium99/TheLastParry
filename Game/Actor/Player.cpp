@@ -9,12 +9,12 @@
 
 
 Player::Player()
-	: super("*(oo)*", Vector2::Zero, Color::Green, 0, 100),
+	: super("*(o.o)/", Vector2::Zero, Color::Green, 0, 100),
 	fireMode(FireMode::OneShot)
 {
 	// 생성 위치 설정.
-	float xPosition = (Engine::Get().GetWidth() / 2) - (width / 2);
-	float yPosition = Engine::Get().GetHeight() - 2;
+	float xPosition = (Engine::Get().GetWidth() / 2) - width;
+	float yPosition = Engine::Get().GetHeight() - 5;
 	SetPosition(Vector2(xPosition, yPosition));
 
 	// 타이머 목표 시간 설정.
