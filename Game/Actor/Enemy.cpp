@@ -111,8 +111,8 @@ void Enemy::Tick(float deltaTime)
 		static_cast<int>(yPosition)
 	));
 
-	// 플레이어 체간 데미지 입력 처리.
-	if (Input::Get().GetKeyDown(VK_UP))
+	// 테스트: 플레이어 체간 데미지 입력 처리.
+	if (Input::Get().GetKeyDown(VK_DELETE))
 	{
 		OnDamaged(120);
 	}

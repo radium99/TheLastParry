@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor/Actor.h"
+#include "Util/Timer.h"
 
 using namespace Wanted;
 
@@ -22,5 +23,9 @@ private:
 
 	// 위치 갱신을 할 때 소수점처리를 위한 변수.
 	float yPosition = 0.0f;
+
+	Timer timer;
+
+	float lifeTime = 0.3f;
 };
 

@@ -20,8 +20,8 @@ private:
 	virtual void Draw() override;
 
 	// 충돌 판정 처리 함수.
-	void ProcessCollisionPlayerBulletAndEnemy();
-	void ProcessCollisionPlayerAndEnemyBullet();
+	void ProcessCollisionPlayerAndEnemy();
+	//void ProcessCollisionEnemyAndPlayer();
 
 	// 점수 보여주는 함수.
 	void ShowScore();

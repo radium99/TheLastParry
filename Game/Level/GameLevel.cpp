@@ -33,8 +33,11 @@ void GameLevel::Tick(float deltaTime)
 	super::Tick(deltaTime);
 
 	// 충돌 판정 처리.
-	ProcessCollisionPlayerBulletAndEnemy();
-	ProcessCollisionPlayerAndEnemyBullet();
+	ProcessCollisionPlayerAndEnemy();
+	//ProcessCollisionEnemyAndPlayer();
+	
+	//ProcessCollisionPlayerBulletAndEnemy();
+	//ProcessCollisionPlayerAndEnemyBullet();
 }
 
 void GameLevel::Draw()
@@ -63,7 +66,7 @@ void GameLevel::Draw()
 	ShowScore();
 }
 
-void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
+void GameLevel::ProcessCollisionPlayerAndEnemy()
 {
 	// 플레이어 탄약과 적 액터 필터링.
 	std::vector<Actor*> bullets;
@@ -98,7 +101,7 @@ void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
 			// AABB 겹침 판정.
 			if (bullet->TestIntersect(enemy))
 			{
-				enemy->OnDamaged(10); // 기존 enemy->OnDamaged();
+				enemy->OnDamaged(100); // 기존 enemy->OnDamaged();
 				bullet->Destroy();
 
 				// 점수 추가.
@@ -108,52 +111,97 @@ void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
 		}
 	}
 }
+//void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
+//{
+//	// 플레이어 탄약과 적 액터 필터링.
+//	std::vector<Actor*> bullets;
+//	std::vector<Enemy*> enemies;
+//
+//	// 액터 필터링.
+//	for (Actor* const actor : actors)
+//	{
+//		if (actor->IsTypeOf<PlayerBullet>())
+//		{
+//			bullets.emplace_back(actor);
+//			continue;
+//		}
+//
+//		if (actor->IsTypeOf<Enemy>())
+//		{
+//			enemies.emplace_back(actor->As<Enemy>());
+//		}
+//	}
+//
+//	// 판정 안해도 되는지 확인.
+//	if (bullets.size() == 0 || enemies.size() == 0)
+//	{
+//		return;
+//	}
+//
+//	// 충돌 판정.
+//	for (Actor* const bullet : bullets)
+//	{
+//		for (Enemy* const enemy : enemies)
+//		{
+//			// AABB 겹침 판정.
+//			if (bullet->TestIntersect(enemy))
+//			{
+//				enemy->OnDamaged(10); // 기존 enemy->OnDamaged();
+//				bullet->Destroy();
+//
+//				// 점수 추가.
+//				score += 1;
+//				continue;
+//			}
+//		}
+//	}
+//}
 
-void GameLevel::ProcessCollisionPlayerAndEnemyBullet()
-{
-	// 액터 필터링을 위한 변수.
-	Player* player = nullptr;
-	std::vector<Actor*> bullets;
-
-	// 액터 필터링.
-	for (Actor* const actor : actors)
-	{
-		if (!player && actor->IsTypeOf<Player>())
-		{
-			player = actor->As<Player>();
-			continue;
-		}
-
-		if (actor->IsTypeOf<EnemyBullet>())
-		{
-			bullets.emplace_back(actor);
-		}
-	}
-
-	// 판정 처리 안해도 되는지 확인.
-	if (bullets.size() == 0 || !player)
-	{
-		return;
-	}
-
-	// 충돌 판정.
-	for (Actor* const bullet : bullets)
-	{
-		if (bullet->TestIntersect(player))
-		{
-			// 플레이어 죽음 설정.
-			isPlayerDead = true;
-
-			// 죽은 위치 저장.
-			playerDeadPosition = player->GetPosition();
-
-			// 액터 제거 처리.
-			player->Destroy();
-			bullet->Destroy();
-			break;
-		}
-	}
-}
+//void GameLevel::ProcessCollisionEnemyAndPlayer()
+//{
+//	// 액터 필터링을 위한 변수.
+//	Player* player = nullptr;
+//	std::vector<Actor*> bullets;
+//
+//	// 액터 필터링.
+//	for (Actor* const actor : actors)
+//	{
+//		if (!player && actor->IsTypeOf<Player>())
+//		{
+//			player = actor->As<Player>();
+//			continue;
+//		}
+//
+//		if (actor->IsTypeOf<EnemyBullet>())
+//		{
+//			bullets.emplace_back(actor);
+//		}
+//	}
+//
+//	// 판정 처리 안해도 되는지 확인.
+//	if (bullets.size() == 0 || !player)
+//	{
+//		return;
+//	}
+//
+//	// 충돌 판정.
+//	for (Actor* const bullet : bullets)
+//	{
+//		if (bullet->TestIntersect(player))
+//		{
+//			// 플레이어 죽음 설정.
+//			isPlayerDead = true;
+//
+//			// 죽은 위치 저장.
+//			playerDeadPosition = player->GetPosition();
+//
+//			// 액터 제거 처리.
+//			player->Destroy();
+//			bullet->Destroy();
+//			break;
+//		}
+//	}
+//}
 
 void GameLevel::ShowScore()
 {

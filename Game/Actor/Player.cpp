@@ -21,13 +21,9 @@ Player::Player()
 	//timer.SetTargetTime(fireInterval);
 	timer.SetTargetTime(0.0165f);
 
-	// 플레이어 체간 시각화.
+	// 테스트용:플레이어 체간 시각화.
 	ShowPosture();
 
-	//AddPlayerProgressBar();
-
-	//playerprogressBar = new ProgressBar(currentPosture, maxPosture); // 필요시 생성자 인자 추가
-	//GetOwner()->AddNewActor(progressBar);
 }
 
 Player::~Player()
@@ -38,6 +34,7 @@ void Player::BeginPlay()
 {
 	super::BeginPlay();
 
+	// ProgressBar 생성 및 연결(값 전달).
 	playerProgressBar = new ProgressBar(currentPosture, maxPosture);
 	GetOwner()->AddNewActor(playerProgressBar);
 }
@@ -53,7 +50,7 @@ void Player::Tick(float deltaTime)
 		QuitGame();
 	}
 
-	if (Input::Get().GetKeyDown(VK_DOWN))
+	if (Input::Get().GetKeyDown(VK_DOWN)) // 테스트: ProgressBar와 연결 확인.
 	{
 		TakePostureDamage(10);
 		if (playerProgressBar)
@@ -62,10 +59,11 @@ void Player::Tick(float deltaTime)
 		}
 	}
 
-	// 플레이어 체간 시각화.
+	// 테스트용: 플레이어 체간 시각화.
 	ShowPosture();
+
+
 	// 경과 시간 업데이트.
-	//elapsedTime += deltaTime;
 	timer.Tick(deltaTime);
 	if (!timer.IsTimeOut())
 	{
@@ -99,10 +97,9 @@ void Player::Tick(float deltaTime)
 		position.y -= 1; ///Engine::Get().GetWidth();
 	}
 
-	ShowPos(position);
 
 	// 플레이어 체간 데미지 입력 처리.
-	if (Input::Get().GetKeyDown(VK_LEFT))
+	if (Input::Get().GetKeyDown(VK_SPACE))
 	{
 		TakePostureDamage(10);
 		playerProgressBar->SetValue(currentPosture, maxPosture);
@@ -128,13 +125,26 @@ void Player::Tick(float deltaTime)
 	//}
 
 	//// 스페이스 키를 활용해 탄약 발사.
-	//if (fireMode == FireMode::OneShot)
-	//{
-	//	if (Input::Get().GetKeyDown(VK_SPACE))
-	//	{
-	//		Fire();
-	//	}
-	//}
+	if (fireMode == FireMode::OneShot)
+	{
+		if (Input::Get().GetKeyDown(VK_LEFT))
+		{
+			Fire(0);
+		}
+		if (Input::Get().GetKeyDown(VK_UP))
+		{
+			Fire(1);
+		}
+		if (Input::Get().GetKeyDown(VK_RIGHT))
+		{
+			Fire(2);
+		}
+		if (Input::Get().GetKeyDown(VK_DOWN))
+		{
+			Fire(3);
+		}
+
+	}
 	//else if (fireMode == FireMode::Repeat)
 	//{
 	//	if (Input::Get().GetKey(VK_SPACE))
@@ -158,6 +168,9 @@ void Player::ShowPosture()
 	std::snprintf(xPosString, sizeof(xPosString), "Player Pousture: %d / %d", currentPosture, maxPosture);
 	Renderer::Get().Submit(xPosString, Vector2(8, 19));
 }
+void Player::ParryingTime()
+{
+}
 //void Player::AddPlayerProgressBar()
 //{
 //    // ProgressBar는 타입 이름이므로, 인스턴스를 생성해야 합니다.
@@ -170,25 +183,8 @@ void Player::ShowPosture()
 //    // 반환값이 ProgressBar 인스턴스라면 아래처럼 반환
 //    // return progressBar;
 //}
-void Player::ShowPos(Vector2& position)
-{
-	//static char xPosString[128] = { 0 };
-	//std::snprintf(xPosString, sizeof(xPosString), "PlayerX: %.2f", position.x);
-	//Renderer::Get().Submit(xPosString, Vector2(8, 19));
 
-	//static char yPosString[128] = { 0 };
-	//std::snprintf(yPosString, sizeof(yPosString), "PlayerY: %.2f", position.y);
-	//Renderer::Get().Submit(yPosString, Vector2(8, 18));
 
-	//char posString[128] = { 0 };
-	//// 안전하게 문자열 포맷
-	//std::snprintf(posString, sizeof(posString), "Score: %f %f", position.x, position.y);
-
-	//Renderer::Get().Submit(
-	//	posString,
-	//	Vector2(10, 10)
-	//);
-}
 void Player::Move() // 임경우.
 {
 	Vector2 mousePos = Input::Get().MousePosition(); // 마우스 위치 가져오기.
@@ -244,33 +240,53 @@ void Player::MoveLeft()
 	}
 }
 
-void Player::Fire()
+void Player::Fire(int dir) // dir 0: left, 1: up, 2: right, 3: down(down은 확장 가능성)
 {
 	// 경과 시간 초기화.
 	//elapsedTime = 0.0f;
 	timer.Reset();
 
-	// 위치 설정.
-	Vector2 bulletPosition(
-		position.x + (width / 2), 
-		position.y
-	);
+	int xVec = position.x;
+	int yVec = position.y;
+
+	// 방향 위치 설정.
+	switch (dir)
+	{
+	case 0:
+		// 왼쪽이면 position.x = position.x - 1;
+		xVec = position.x - 1;
+		break;
+	case 1:
+		// 업이면 position.x = positon.x - 1;
+		xVec = position.x + (width / 2);
+		yVec = position.y - 1;
+		break;
+	case 2:
+		// 오른쪽이면 position.x = position.x - 1;
+		xVec = position.x + width + 1;
+		break;
+	default:
+		xVec = position.x + (width / 2);
+		yVec = position.y + 1;
+		break;
+	}
+	Vector2 bulletPosition(xVec, yVec);
 
 	// 액터 생성.
-	//AddNewActor(new PlayerBullet(bulletPosition));
+	GetOwner()->AddNewActor(new PlayerBullet(bulletPosition));
 }
 
-void Player::FireInterval()
-{
-	// 발사 가능 여부 확인.
-	if (!CanShoot())
-	{
-		return;
-	}
-
-	// 발사.
-	Fire();
-}
+//void Player::FireInterval()
+//{
+//	// 발사 가능 여부 확인.
+//	if (!CanShoot())
+//	{
+//		return;
+//	}
+//
+//	// 발사.
+//	Fire();
+//}
 
 bool Player::CanShoot() const
 {
@@ -278,3 +294,4 @@ bool Player::CanShoot() const
 	// 발사 간격보다 더 많이 흘렀는지.
 	return timer.IsTimeOut();
 }
+

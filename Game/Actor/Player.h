@@ -38,7 +38,7 @@ private:
 	void MoveLeft();
 
 	// 탄약 발사 함수.
-	void Fire();
+	void Fire(int dir);
 
 	// 연속 발사 함수.
 	void FireInterval();
@@ -54,7 +54,10 @@ private:
 	void ShowPosture();
 
 	// Progress바 생성.
-	void AddPlayerProgressBar();
+	//void AddPlayerProgressBar();
+
+	// 플레이어 페링 지속 시간 함수.
+	void ParryingTime();
 
 private:
 	// 발사 모드.
