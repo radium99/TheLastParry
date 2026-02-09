@@ -10,9 +10,11 @@ namespace Wanted
 	enum class WANTED_API Color : unsigned short
 	{
 		Black = 0,
-		Blue = FOREGROUND_BLUE,
+		Blue = FOREGROUND_BLUE,// 전경
 		Green = FOREGROUND_GREEN,
 		Red = FOREGROUND_RED,
 		White = Blue | Green | Red,
+		BgBlue = BACKGROUND_BLUE,// 배경
+		BgGreen = BACKGROUND_GREEN
 	};
 }

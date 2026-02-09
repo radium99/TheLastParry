@@ -23,10 +23,23 @@ Player::Player()
 
 	// 플레이어 체간 시각화.
 	ShowPosture();
+
+	//AddPlayerProgressBar();
+
+	//playerprogressBar = new ProgressBar(currentPosture, maxPosture); // 필요시 생성자 인자 추가
+	//GetOwner()->AddNewActor(progressBar);
 }
 
 Player::~Player()
 {
+}
+
+void Player::BeginPlay()
+{
+	super::BeginPlay();
+
+	playerProgressBar = new ProgressBar(currentPosture, maxPosture);
+	GetOwner()->AddNewActor(playerProgressBar);
 }
 
 void Player::Tick(float deltaTime)
@@ -38,6 +51,15 @@ void Player::Tick(float deltaTime)
 	{
 		// 게임 종료.
 		QuitGame();
+	}
+
+	if (Input::Get().GetKeyDown(VK_DOWN))
+	{
+		TakePostureDamage(10);
+		if (playerProgressBar)
+		{
+			playerProgressBar->SetValue(currentPosture, maxPosture);
+		}
 	}
 
 	// 플레이어 체간 시각화.
@@ -83,6 +105,7 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_LEFT))
 	{
 		TakePostureDamage(10);
+		playerProgressBar->SetValue(currentPosture, maxPosture);
 	}
 
 	//플레이어 위치 출력
@@ -135,6 +158,18 @@ void Player::ShowPosture()
 	std::snprintf(xPosString, sizeof(xPosString), "Player Pousture: %d / %d", currentPosture, maxPosture);
 	Renderer::Get().Submit(xPosString, Vector2(8, 19));
 }
+//void Player::AddPlayerProgressBar()
+//{
+//    // ProgressBar는 타입 이름이므로, 인스턴스를 생성해야 합니다.
+//    // 예시: ProgressBar* progressBar = new ProgressBar();
+//    // 그리고 AddNewActor에 progressBar를 전달해야 합니다.
+//    // ProgressBar 클래스가 생성자 인자를 필요로 한다면 적절히 전달해야 합니다.
+//
+//    playerProgressBar = new ProgressBar(currentPosture, maxPosture); // 필요시 생성자 인자 추가
+//    GetOwner()->AddNewActor(playerProgressBar);
+//    // 반환값이 ProgressBar 인스턴스라면 아래처럼 반환
+//    // return progressBar;
+//}
 void Player::ShowPos(Vector2& position)
 {
 	//static char xPosString[128] = { 0 };
@@ -222,7 +257,7 @@ void Player::Fire()
 	);
 
 	// 액터 생성.
-	GetOwner()->AddNewActor(new PlayerBullet(bulletPosition));
+	//AddNewActor(new PlayerBullet(bulletPosition));
 }
 
 void Player::FireInterval()

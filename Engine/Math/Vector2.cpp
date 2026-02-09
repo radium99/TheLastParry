@@ -72,18 +72,18 @@ namespace Wanted
 		return coord;
 	}
 	
-	void Vector2::ChangeToUnitVector()
-	{
-		// ¾Æ·¡ µÎ ³à¼®À» float·Î ¹ÞÀ¸¸é ÇÃ·¹ÀÌ¾ï ÁÂ¿ì·Î Èçµé¸².
-		float distanceSquare = x*x + y*y;	// ¹æÇâº¤ÅÍ Å¸°Ù(x, y), ÇÃ·¹ÀÌ¾î(a,b)  => (x-a)^2, (y - b)^2
-		float len = sqrtf(distanceSquare); // °Å¸®±¸ÇÔ.
+	//void Vector2::ChangeToUnitVector()
+	//{
+	//	// ¾Æ·¡ µÎ ³à¼®À» float·Î ¹ÞÀ¸¸é ÇÃ·¹ÀÌ¾ï ÁÂ¿ì·Î Èçµé¸².
+	//	float distanceSquare = x*x + y*y;	// ¹æÇâº¤ÅÍ Å¸°Ù(x, y), ÇÃ·¹ÀÌ¾î(a,b)  => (x-a)^2, (y - b)^2
+	//	float len = sqrtf(distanceSquare); // °Å¸®±¸ÇÔ.
 
-		if (len != 0.0f)
-		{
-			x =	x / len;
-			y =	y / len;
-		}
-	}
+	//	if (len != 0.0f)
+	//	{
+	//		x =	x / len;
+	//		y =	y / len;
+	//	}
+	//}
 	Vector2 Vector2::operator*(const int other) const
 	{
 		return Vector2(x * other, y* other);

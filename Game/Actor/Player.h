@@ -2,6 +2,7 @@
 
 #include "Util/Timer.h"
 #include "Actor/Combatant.h" // 0207  Actor -> Combatant로 상속 변경.
+#include "Actor/Progressbar.h"
 
 using namespace Wanted;
 
@@ -22,6 +23,8 @@ public:
 	~Player();
 
 private:
+
+	virtual void BeginPlay() override; // BeginPlay 오버라이드 선언 추가
 	virtual void Tick(float deltaTime) override;
 
 	// 마우스 위치로 이동하는 함수. 임경우.
@@ -50,6 +53,9 @@ private:
 	// 테스트: 플레이어 체간 확인용 함수.
 	void ShowPosture();
 
+	// Progress바 생성.
+	void AddPlayerProgressBar();
+
 private:
 	// 발사 모드.
 	FireMode fireMode = FireMode::None;
@@ -62,4 +68,6 @@ private:
 
 	// 이동 속력.
 	float speed = 10.0f;
+
+	ProgressBar* playerProgressBar = nullptr;
 };

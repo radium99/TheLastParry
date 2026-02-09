@@ -21,7 +21,7 @@ GameLevel::GameLevel()
 	AddNewActor(new MouseTester());
 
 	// Test: 체간 게이지 표시 추가.
-	AddNewActor(new ProgressBar());
+	//AddNewActor(new ProgressBar());
 }
 
 GameLevel::~GameLevel()

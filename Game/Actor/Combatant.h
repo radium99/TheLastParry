@@ -27,7 +27,6 @@ public:
 	// 전투 불능 상태 확인하는 함수.
 	void IsPostureBroken(bool state);
 
-	void Render();
 	
 protected:
 
@@ -36,8 +35,5 @@ protected:
 
 	// 현재 체간 수치.
 	int currentPosture = 0;
-
-	ProgressBar postureBar;
-
 };
 

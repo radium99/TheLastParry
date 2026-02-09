@@ -16,9 +16,9 @@ namespace Wanted
 
 	public:
 		Actor(
-			const char* image = "",
-			const Vector2& position = Vector2::Zero,
-			Color color = Color::White
+			const char* image = "", // 이미지 문자
+			const Vector2& position = Vector2::Zero, // 좌표 (x,y)
+			Color color = Color::White // 색 선정.
 		);
 		virtual ~Actor();
 
