@@ -39,3 +39,11 @@ void Combatant::IsPostureBroken(bool state)
 		// Todo: 전투 불능 상태로 변경 시키는 코드 작성.
 	}
 }
+
+ParringStrategy* Combatant::parringStrategy(Combatant& owner, float timingDiff)
+{	
+
+	//Excute(*this);
+	
+	return nullptr;
+}

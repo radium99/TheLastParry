@@ -3,7 +3,17 @@
 #include "Level/Level.h"
 #include "Math/Vector2.h"
 
+#include "Actor/HitReactionStrategy.h"
+#include "Actor/ParringStrategy.h"
+//#include <memory>
+
 using namespace Wanted;
+
+class PlayerBullet;
+class Player;
+class Enemy;
+class ParryingStrategy;
+class HitReactionStrategy;
 
 class GameLevel : public Level
 {
@@ -14,13 +24,25 @@ public:
 	GameLevel();
 	~GameLevel();
 
+	// 패링 판정 관련 함수.
+
+    // 기존 선언에서 Player* 타입이 일치하지 않아 발생하는 오류를 수정합니다.
+    // 아래와 같이 함수 선언을 명확히 Player* 타입으로 맞춰줍니다.
+
+    void ProcessParry(PlayerBullet* parryObject, Enemy* enemy, Player* player);
 private:
+
+	// 패링 판정 관련 전략 객체들 변수 선언.
+	ParryingStrategy* parryingStrategy;
+	HitReactionStrategy* hitReactionStrategy;
+
+	//std::unique_ptr<ParringQuality> parryingStrategy = std::make_unique<ParringQuality>;
 
 	virtual void Tick(float deltaTime) override;
 	virtual void Draw() override;
 
 	// 충돌 판정 처리 함수.
-	void ProcessCollisionPlayerAndEnemy();
+	void ProcessCollisionParryingAndEnemy();
 	void ProcessCollisionEnemyAndPlayer();
 
 	// 점수 보여주는 함수.

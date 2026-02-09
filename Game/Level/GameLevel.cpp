@@ -22,10 +22,31 @@ GameLevel::GameLevel()
 
 	// Test: 체간 게이지 표시 추가.
 	//AddNewActor(new ProgressBar());
+
 }
 
 GameLevel::~GameLevel()
 {
+	delete parryingStrategy;
+	parryingStrategy = nullptr;
+}
+
+void GameLevel::ProcessParry(PlayerBullet* parryObject, Enemy* enemy, Player* player)
+{
+	if (!parryObject || !enemy || !player)
+	{
+		return;
+	}
+	// 패링 지속 시간 받아오기
+	float elapsedTime = parryObject->GetParryingElapsedTime(); 
+
+	// 받은 시간을 기반으로 패링 퀄리티 계산.
+	ParryingQuality quality = parryingStrategy->CalculateParryQuality(elapsedTime);
+
+	if (player)
+	{
+		hitReactionStrategy->ApplyParryResult(player, enemy, quality);
+	}
 }
 
 void GameLevel::Tick(float deltaTime)
@@ -33,8 +54,8 @@ void GameLevel::Tick(float deltaTime)
 	super::Tick(deltaTime);
 
 	// 충돌 판정 처리.
-	ProcessCollisionPlayerAndEnemy();
-	ProcessCollisionEnemyAndPlayer();
+	ProcessCollisionParryingAndEnemy(); // 패링오브젝트 & Enemy
+	ProcessCollisionEnemyAndPlayer();	// 플레이어 &  Enemy
 	//ProcessCollisionEnemyAndPlayer();
 	
 	//ProcessCollisionPlayerBulletAndEnemy();
@@ -67,18 +88,20 @@ void GameLevel::Draw()
 	ShowScore();
 }
 
-void GameLevel::ProcessCollisionPlayerAndEnemy()
+// 패링오브젝트와 Enemy 충돌 처리.
+void GameLevel::ProcessCollisionParryingAndEnemy()
 {
 	// 플레이어 탄약과 적 액터 필터링.
-	std::vector<Actor*> parrys;
+	std::vector<PlayerBullet*> parryings;
 	std::vector<Enemy*> enemies;
+	Player* player = nullptr; // Player*로 선언
 
 	// 액터 필터링.
 	for (Actor* const actor : actors)
 	{
 		if (actor->IsTypeOf<PlayerBullet>())
 		{
-			parrys.emplace_back(actor);
+			parryings.emplace_back(actor->As<PlayerBullet>());
 			continue;
 		}
 
@@ -86,22 +109,28 @@ void GameLevel::ProcessCollisionPlayerAndEnemy()
 		{
 			enemies.emplace_back(actor->As<Enemy>());
 		}
+
+		if (!player && actor->IsTypeOf<Player>())
+		{
+			player = actor->As<Player>(); // 타입 변환
+		}
 	}
 
 	// 판정 안해도 되는지 확인.
-	if (parrys.size() == 0 || enemies.size() == 0)
+	if (parryings.size() == 0 || enemies.size() == 0)
 	{
 		return;
 	}
 
 	// 충돌 판정.
-	for (Actor* const parry : parrys)
+	for (PlayerBullet* const parrying : parryings)
 	{
 		for (Enemy* const enemy : enemies)
 		{
 			// AABB 겹침 판정.
-			if (parry->TestIntersect(enemy))
+			if (parrying->TestIntersect(enemy))
 			{
+				ProcessParry(parrying, enemy, player);
 				enemy->OnDamaged(100); // 기존 enemy->OnDamaged();
 				
 				// 페링 시스템을 넣었다면(Perfect, good, bad) 페링모션 자체는 없어지면 안될 것 같다고 판단.
@@ -160,6 +189,7 @@ void GameLevel::ProcessCollisionPlayerAndEnemy()
 //	}
 //}
 
+// 플레이어와 Enemy 충돌 처리: 패링 실패 or 피격 시
 void GameLevel::ProcessCollisionEnemyAndPlayer()
 {
 	// 액터 필터링을 위한 변수.

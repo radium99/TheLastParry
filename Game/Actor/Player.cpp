@@ -124,26 +124,39 @@ void Player::Tick(float deltaTime)
 	//	MoveRight();
 	//}
 
-	//// 스페이스 키를 활용해 탄약 발사.
+	// 키를 활용해 패링 탄약 발사.
 	if (fireMode == FireMode::OneShot)
 	{
-		if (Input::Get().GetKeyDown(VK_LEFT))
+		if (Input::Get().GetKey(VK_LEFT))
 		{
-			Fire(0);
+			StartParry(0);
 		}
-		if (Input::Get().GetKeyDown(VK_UP))
+		if (Input::Get().GetKey(VK_UP))
 		{
-			Fire(1);
+			StartParry(1);
 		}
-		if (Input::Get().GetKeyDown(VK_RIGHT))
+		if (Input::Get().GetKey(VK_RIGHT))
 		{
-			Fire(2);
+			StartParry(2);
 		}
-		if (Input::Get().GetKeyDown(VK_DOWN))
+		if (Input::Get().GetKey(VK_DOWN))
 		{
-			Fire(3);
+			StartParry(3);
 		}
 
+		// 패링 중, 패링 시작한 경우.
+		if (isParring)
+		{
+			parryTimer.SetTargetTime(parryingDuration);
+			parryTimer.Tick(deltaTime);
+
+		}
+
+		// 패링 시간 초과.
+		if (parryTimer.IsTimeOut())
+		{
+			StopParry();
+		}
 	}
 	//else if (fireMode == FireMode::Repeat)
 	//{
@@ -168,82 +181,24 @@ void Player::ShowPosture()
 	std::snprintf(xPosString, sizeof(xPosString), "Player Pousture: %d / %d", currentPosture, maxPosture);
 	Renderer::Get().Submit(xPosString, Vector2(8, 19));
 }
-void Player::ParryingTime()
+
+void Player::StopParry()
 {
-}
-//void Player::AddPlayerProgressBar()
-//{
-//    // ProgressBar는 타입 이름이므로, 인스턴스를 생성해야 합니다.
-//    // 예시: ProgressBar* progressBar = new ProgressBar();
-//    // 그리고 AddNewActor에 progressBar를 전달해야 합니다.
-//    // ProgressBar 클래스가 생성자 인자를 필요로 한다면 적절히 전달해야 합니다.
-//
-//    playerProgressBar = new ProgressBar(currentPosture, maxPosture); // 필요시 생성자 인자 추가
-//    GetOwner()->AddNewActor(playerProgressBar);
-//    // 반환값이 ProgressBar 인스턴스라면 아래처럼 반환
-//    // return progressBar;
-//}
+	// 패링 상태 업데이트.
+	isParring = false;
 
-
-void Player::Move() // 임경우.
-{
-	Vector2 mousePos = Input::Get().MousePosition(); // 마우스 위치 가져오기.
-	//Vector2 UnitVector= mousePos - position; // 방향벡터.
-	Vector2 UnitVector;
-	UnitVector.x = mousePos.x - position.x;
-	UnitVector.y = mousePos.y - position.y;
-
-	float len = sqrtf(((mousePos.x - position.x) * (mousePos.x - position.x)) + ((mousePos.y - position.y) * (mousePos.y - position.y)));
-	if (len)
-	{
-		UnitVector.x /= len;
-		UnitVector.y /= len;
-	}
-
-	float deltaX = position.x - mousePos.x;
-	float deltaY = position.y - mousePos.y;
-	
-	//UnitVector.ChangeToUnitVector(); // 정수 받아 유클리드 거리 공식으로  단위 벡터 만들기.
-	
-	// 위치 이동 코드.
-	//position.x = position.x + UnitVector.x ; // * 실수형 deltaTime 빠짐.
-	//position.y = position.y + UnitVector.y;
-
-		
-	// 이동 예시 코드:
-	//position.x = mousePos.x;
-	//position.y = mousePos.y;
+	// 패링 시간도 초기화.
+	parryTimer.Reset();
 }
 
-void Player::MoveRight()
+void Player::StartParry(int dir)
 {
-	// 오른쪽 이동 처리.
-	position.x += 1;
-
-	// 좌표 검사.
-	// "<-=A=->"
-	if (position.x + width > Engine::Get().GetWidth())
-	{
-		position.x -= 1;
-	}
-}
-
-void Player::MoveLeft()
-{
-	// 왼쪽 이동 처리.
-	position.x -= 1;
-
-	// 좌표 검사.
-	if (position.x < 0)
-	{
-		position.x = 0;
-	}
-}
-
-void Player::Fire(int dir) // dir 0: left, 1: up, 2: right, 3: down(down은 확장 가능성)
-{
+	// 패링 상태 업데이트.
+	isParring = true;
+	// 패링 시간 목표 설정.
+	parryTimer.SetTargetTime(parryingDuration);
 	// 경과 시간 초기화.
-	//elapsedTime = 0.0f;
+//elapsedTime = 0.0f;
 	timer.Reset();
 
 	int xVec = position.x;
@@ -275,6 +230,111 @@ void Player::Fire(int dir) // dir 0: left, 1: up, 2: right, 3: down(down은 확장 
 	// 액터 생성.
 	GetOwner()->AddNewActor(new PlayerBullet(bulletPosition));
 }
+
+//void Player::AddPlayerProgressBar()
+//{
+//    // ProgressBar는 타입 이름이므로, 인스턴스를 생성해야 합니다.
+//    // 예시: ProgressBar* progressBar = new ProgressBar();
+//    // 그리고 AddNewActor에 progressBar를 전달해야 합니다.
+//    // ProgressBar 클래스가 생성자 인자를 필요로 한다면 적절히 전달해야 합니다.
+//
+//    playerProgressBar = new ProgressBar(currentPosture, maxPosture); // 필요시 생성자 인자 추가
+//    GetOwner()->AddNewActor(playerProgressBar);
+//    // 반환값이 ProgressBar 인스턴스라면 아래처럼 반환
+//    // return progressBar;
+//}
+
+
+//void Player::Move() // 임경우.
+//{
+//	Vector2 mousePos = Input::Get().MousePosition(); // 마우스 위치 가져오기.
+//	//Vector2 UnitVector= mousePos - position; // 방향벡터.
+//	Vector2 UnitVector;
+//	UnitVector.x = mousePos.x - position.x;
+//	UnitVector.y = mousePos.y - position.y;
+//
+//	float len = sqrtf(((mousePos.x - position.x) * (mousePos.x - position.x)) + ((mousePos.y - position.y) * (mousePos.y - position.y)));
+//	if (len)
+//	{
+//		UnitVector.x /= len;
+//		UnitVector.y /= len;
+//	}
+//
+//	float deltaX = position.x - mousePos.x;
+//	float deltaY = position.y - mousePos.y;
+	
+	//UnitVector.ChangeToUnitVector(); // 정수 받아 유클리드 거리 공식으로  단위 벡터 만들기.
+	
+	// 위치 이동 코드.
+	//position.x = position.x + UnitVector.x ; // * 실수형 deltaTime 빠짐.
+	//position.y = position.y + UnitVector.y;
+
+		
+	// 이동 예시 코드:
+	//position.x = mousePos.x;
+	//position.y = mousePos.y;
+//}
+
+//void Player::MoveRight()
+//{
+//	// 오른쪽 이동 처리.
+//	position.x += 1;
+//
+//	// 좌표 검사.
+//	// "<-=A=->"
+//	if (position.x + width > Engine::Get().GetWidth())
+//	{
+//		position.x -= 1;
+//	}
+//}
+
+//void Player::MoveLeft()
+//{
+//	// 왼쪽 이동 처리.
+//	position.x -= 1;
+//
+//	// 좌표 검사.
+//	if (position.x < 0)
+//	{
+//		position.x = 0;
+//	}
+//}
+
+//void Player::Fire(int dir) // dir 0: left, 1: up, 2: right, 3: down(down은 확장 가능성)
+//{
+//	// 경과 시간 초기화.
+//	//elapsedTime = 0.0f;
+//	timer.Reset();
+//
+//	int xVec = position.x;
+//	int yVec = position.y;
+//
+//	// 방향 위치 설정.
+//	switch (dir)
+//	{
+//	case 0:
+//		// 왼쪽이면 position.x = position.x - 1;
+//		xVec = position.x - 1;
+//		break;
+//	case 1:
+//		// 업이면 position.x = positon.x - 1;
+//		xVec = position.x + (width / 2);
+//		yVec = position.y - 1;
+//		break;
+//	case 2:
+//		// 오른쪽이면 position.x = position.x - 1;
+//		xVec = position.x + width + 1;
+//		break;
+//	default:
+//		xVec = position.x + (width / 2);
+//		yVec = position.y + 1;
+//		break;
+//	}
+//	Vector2 bulletPosition(xVec, yVec);
+//
+//	// 액터 생성.
+//	GetOwner()->AddNewActor(new PlayerBullet(bulletPosition));
+//}
 
 //void Player::FireInterval()
 //{

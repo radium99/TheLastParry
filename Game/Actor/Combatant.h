@@ -2,7 +2,12 @@
 #include "Actor/Actor.h"
 #include "Actor/Progressbar.h"
 
+
 using namespace Wanted;
+
+class ParringStrategy; // 전방 선언: 참조순환 및 컴파일 시간 단축을 위함.
+class ParringQuality;
+class HitReactionStrategy;
 
 class Combatant : public Actor
 {
@@ -27,6 +32,8 @@ public:
 	// 전투 불능 상태 확인하는 함수.
 	void IsPostureBroken(bool state);
 
+	//패링 시스템 함수.
+	ParringStrategy* parringStrategy(Combatant& owner,  float timingDiff);
 	
 protected:
 

@@ -15,6 +15,8 @@ public:
 
 	virtual void Tick(float deltaTime) override;
 
+	float GetParryingElapsedTime() const { return timer.GetElapsedTime(); }
+
 private:
 
 	// 이동 속도.
@@ -26,6 +28,6 @@ private:
 
 	Timer timer;
 
-	float lifeTime = 0.3f;
+	float lifeTime = 1.0f;
 };
 

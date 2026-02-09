@@ -4,8 +4,7 @@ PlayerBullet::PlayerBullet(const Vector2& position)
 	: super("@", position, Color::Blue),
 	yPosition(static_cast<float>(position.y))
 {
-	timer.SetTargetTime(lifeTime); // 60프레임 기준. 1초?
-	timer.Reset();
+	timer.SetTargetTime(lifeTime); // 패링 최대 지속 시간 설정.
 }
 
 PlayerBullet::~PlayerBullet()
@@ -20,7 +19,7 @@ void PlayerBullet::Tick(float deltaTime)
 	// 좌표 검사.
 	timer.Tick(deltaTime);
 	if (timer.IsTimeOut()) { // yPosition < 0.0f
-		// 삭제 처리.
+		// 패링 최대 지속 시간 도달 시 삭제 처리.
 		Destroy();
 		return;
 	}
