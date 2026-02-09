@@ -34,6 +34,7 @@ void GameLevel::Tick(float deltaTime)
 
 	// 충돌 판정 처리.
 	ProcessCollisionPlayerAndEnemy();
+	ProcessCollisionEnemyAndPlayer();
 	//ProcessCollisionEnemyAndPlayer();
 	
 	//ProcessCollisionPlayerBulletAndEnemy();
@@ -69,7 +70,7 @@ void GameLevel::Draw()
 void GameLevel::ProcessCollisionPlayerAndEnemy()
 {
 	// 플레이어 탄약과 적 액터 필터링.
-	std::vector<Actor*> bullets;
+	std::vector<Actor*> parrys;
 	std::vector<Enemy*> enemies;
 
 	// 액터 필터링.
@@ -77,7 +78,7 @@ void GameLevel::ProcessCollisionPlayerAndEnemy()
 	{
 		if (actor->IsTypeOf<PlayerBullet>())
 		{
-			bullets.emplace_back(actor);
+			parrys.emplace_back(actor);
 			continue;
 		}
 
@@ -88,21 +89,23 @@ void GameLevel::ProcessCollisionPlayerAndEnemy()
 	}
 
 	// 판정 안해도 되는지 확인.
-	if (bullets.size() == 0 || enemies.size() == 0)
+	if (parrys.size() == 0 || enemies.size() == 0)
 	{
 		return;
 	}
 
 	// 충돌 판정.
-	for (Actor* const bullet : bullets)
+	for (Actor* const parry : parrys)
 	{
 		for (Enemy* const enemy : enemies)
 		{
 			// AABB 겹침 판정.
-			if (bullet->TestIntersect(enemy))
+			if (parry->TestIntersect(enemy))
 			{
 				enemy->OnDamaged(100); // 기존 enemy->OnDamaged();
-				bullet->Destroy();
+				
+				// 페링 시스템을 넣었다면(Perfect, good, bad) 페링모션 자체는 없어지면 안될 것 같다고 판단.
+				//parry->Destroy();
 
 				// 점수 추가.
 				score += 1;
@@ -111,7 +114,7 @@ void GameLevel::ProcessCollisionPlayerAndEnemy()
 		}
 	}
 }
-//void GameLevel::ProcessCollisionPlayerBulletAndEnemy()
+//void GameLevel::ProcessCollisionEnemyHitPlayer()
 //{
 //	// 플레이어 탄약과 적 액터 필터링.
 //	std::vector<Actor*> bullets;
@@ -157,51 +160,51 @@ void GameLevel::ProcessCollisionPlayerAndEnemy()
 //	}
 //}
 
-//void GameLevel::ProcessCollisionEnemyAndPlayer()
-//{
-//	// 액터 필터링을 위한 변수.
-//	Player* player = nullptr;
-//	std::vector<Actor*> bullets;
-//
-//	// 액터 필터링.
-//	for (Actor* const actor : actors)
-//	{
-//		if (!player && actor->IsTypeOf<Player>())
-//		{
-//			player = actor->As<Player>();
-//			continue;
-//		}
-//
-//		if (actor->IsTypeOf<EnemyBullet>())
-//		{
-//			bullets.emplace_back(actor);
-//		}
-//	}
-//
-//	// 판정 처리 안해도 되는지 확인.
-//	if (bullets.size() == 0 || !player)
-//	{
-//		return;
-//	}
-//
-//	// 충돌 판정.
-//	for (Actor* const bullet : bullets)
-//	{
-//		if (bullet->TestIntersect(player))
-//		{
-//			// 플레이어 죽음 설정.
-//			isPlayerDead = true;
-//
-//			// 죽은 위치 저장.
-//			playerDeadPosition = player->GetPosition();
-//
-//			// 액터 제거 처리.
-//			player->Destroy();
-//			bullet->Destroy();
-//			break;
-//		}
-//	}
-//}
+void GameLevel::ProcessCollisionEnemyAndPlayer()
+{
+	// 액터 필터링을 위한 변수.
+	Player* player = nullptr;
+	std::vector<Actor*> enemys;
+
+	// 액터 필터링.
+	for (Actor* const actor : actors)
+	{
+		if (!player && actor->IsTypeOf<Player>())
+		{
+			player = actor->As<Player>();
+			continue;
+		}
+
+		if (actor->IsTypeOf<Enemy>())
+		{
+			enemys.emplace_back(actor);
+		}
+	}
+
+	// 판정 처리 안해도 되는지 확인.
+	if (enemys.size() == 0 || !player)
+	{
+		return;
+	}
+
+	// 충돌 판정.
+	for (Actor* const enemy : enemys)
+	{
+		if (enemy->TestIntersect(player))
+		{
+			// 플레이어 죽음 설정.
+			isPlayerDead = true;
+
+			// 죽은 위치 저장.
+			playerDeadPosition = player->GetPosition();
+
+			// 액터 제거 처리.
+			player->Destroy();
+			enemy->Destroy();
+			break;
+		}
+	}
+}
 
 void GameLevel::ShowScore()
 {
