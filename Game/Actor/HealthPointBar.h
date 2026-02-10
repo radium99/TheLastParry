@@ -9,21 +9,21 @@
 using namespace Wanted;
 
 // 전방 선언으로 클래스 포인터로 사용되어서 maxPosture와 currentPosture를 받을 예정. 아마도?
-class ProgressBar : public Actor
+class HealthPointBar : public Actor
 {
-	RTTI_DECLARATIONS(ProgressBar, Actor)
+	RTTI_DECLARATIONS(HealthPointBar, Actor)
 
 public:
 
 	// 생성자.
-	ProgressBar(int currentValue, int maxValue, Vector2& position);
+	HealthPointBar(int currentValue, int maxValue, Vector2& position);
 
 	// 소멸자.
-	~ProgressBar();
+	~HealthPointBar();
 
 	// Setter. private 내 접근하기 위한 함수.
 	void SetValue(int current, int max);
-	
+
 	virtual void Tick(float deltaTime) override;
 
 private:
@@ -35,7 +35,7 @@ private:
 	// 체간 수치를 저장하기 위한 변수.
 	int _currentValue;
 	int _maxValue;
-	
+
 	// 게이지바 위치 변수.
 	//Vector2 _position;
 
@@ -48,7 +48,7 @@ private:
 	//Color _fillColor;
 	//Color _emptyColor;
 
-	int _sortingOrder= 11;
+	int _sortingOrder = 11;
 
 	// 생성 타이머.
 	Timer timer;

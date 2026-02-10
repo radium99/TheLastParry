@@ -20,4 +20,6 @@ private:
 private:
 	// 생성 타이머.
 	Timer timer;
+
+	const float spawnInterval = 1.2f; // 스폰 시간 고정.
 };

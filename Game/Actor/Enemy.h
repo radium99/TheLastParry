@@ -26,7 +26,9 @@ public:
 	virtual void Tick(float deltaTime) override;
 
 	// 대미지 받았을 때 처리할 함수.
-	void OnDamaged(int dmg);
+	void OnDamaged(int postureDmg, int hpDmg);
+
+	Vector2 GetProgressBarPosition() const override;
 
 private:
 	// 이동 방향 열거형.

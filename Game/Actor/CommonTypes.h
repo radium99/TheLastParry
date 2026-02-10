@@ -6,7 +6,7 @@ enum class ParryingQuality
     Perfect,   // 0 ~ 0.2s
     Great,    // 0.2s ~ 0.5s
     Guard,     // 0.5s ~ 1.0s
-	Fail	// 임시.
+	//Fail	// 임시.
 };
 
 struct HitResult {

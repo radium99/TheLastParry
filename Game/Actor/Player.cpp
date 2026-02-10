@@ -9,7 +9,7 @@
 
 
 Player::Player()
-	: super("*(o.o)/", Vector2::Zero, Color::Green, 0, 100),
+	: super("w(o.o)/", Vector2::Zero, Color::Green, 0, 100, 100, 100),
 	fireMode(FireMode::OneShot)
 {
 	// 생성 위치 설정.
@@ -18,9 +18,8 @@ Player::Player()
 	SetPosition(Vector2(xPosition, yPosition));
 
 	// 타이머 목표 시간 설정.
-	//timer.SetTargetTime(fireInterval);
 	timer.SetTargetTime(0.0165f);
-
+	
 	// 테스트용:플레이어 체간 시각화.
 	ShowPosture();
 
@@ -30,14 +29,14 @@ Player::~Player()
 {
 }
 
-void Player::BeginPlay()
-{
-	super::BeginPlay();
-
-	// ProgressBar 생성 및 연결(값 전달).
-	playerProgressBar = new ProgressBar(currentPosture, maxPosture);
-	GetOwner()->AddNewActor(playerProgressBar);
-}
+//void Player::BeginPlay()
+//{
+//	super::BeginPlay();
+//
+//	// ProgressBar 생성 및 연결(값 전달).
+//	playerProgressBar = new ProgressBar(currentPosture, maxPosture);
+//	GetOwner()->AddNewActor(playerProgressBar);
+//}
 
 void Player::Tick(float deltaTime)
 {
@@ -53,9 +52,15 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_DOWN)) // 테스트: ProgressBar와 연결 확인.
 	{
 		TakePostureDamage(10);
-		if (playerProgressBar)
+		if (progressBar)
 		{
-			playerProgressBar->SetValue(currentPosture, maxPosture);
+			progressBar->SetValue(currentPosture, maxPosture);
+		}
+		TakeHealthPointDamage(10);
+		if (healthPointBar)
+		{
+			healthPointBar->SetValue(currentPosture, maxPosture);
+
 		}
 	}
 
@@ -102,7 +107,7 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_SPACE))
 	{
 		TakePostureDamage(10);
-		playerProgressBar->SetValue(currentPosture, maxPosture);
+		progressBar->SetValue(currentPosture, maxPosture);
 	}
 
 	//플레이어 위치 출력
@@ -127,26 +132,38 @@ void Player::Tick(float deltaTime)
 	// 키를 활용해 패링 탄약 발사.
 	if (fireMode == FireMode::OneShot)
 	{
-		if (Input::Get().GetKey(VK_LEFT))
+		if (parryTimer.GetElapsedTime() > 0)
 		{
-			StartParry(0);
+			isParring = true;
 		}
-		if (Input::Get().GetKey(VK_UP))
+		else
 		{
-			StartParry(1);
-		}
-		if (Input::Get().GetKey(VK_RIGHT))
-		{
-			StartParry(2);
-		}
-		if (Input::Get().GetKey(VK_DOWN))
-		{
-			StartParry(3);
+			if (Input::Get().GetKey(VK_LEFT))
+			{
+				StartParry(0);
+				Actor::ChangeImage("ㅡ(o_o)w");
+			}
+			if (Input::Get().GetKey(VK_UP))
+			{
+				StartParry(1);
+				Actor::ChangeImage("w(0-0)7");
+			}
+			if (Input::Get().GetKey(VK_RIGHT))
+			{
+				StartParry(2);
+				Actor::ChangeImage("w(o_o)ㅡ");
+			}
+			if (Input::Get().GetKey(VK_DOWN))
+			{
+				StartParry(3);
+				Actor::ChangeImage("w(___)/");
+			}
 		}
 
 		// 패링 중, 패링 시작한 경우.
 		if (isParring)
 		{
+			// 패링 시전 시간 측정.
 			parryTimer.SetTargetTime(parryingDuration);
 			parryTimer.Tick(deltaTime);
 
@@ -156,6 +173,7 @@ void Player::Tick(float deltaTime)
 		if (parryTimer.IsTimeOut())
 		{
 			StopParry();
+			Actor::ChangeImage("w(o.o)/");
 		}
 	}
 	//else if (fireMode == FireMode::Repeat)
@@ -180,6 +198,10 @@ void Player::ShowPosture()
 	static char xPosString[128] = { 0 };
 	std::snprintf(xPosString, sizeof(xPosString), "Player Pousture: %d / %d", currentPosture, maxPosture);
 	Renderer::Get().Submit(xPosString, Vector2(8, 19));
+
+	static char hPosString[128] = { 0 };
+	std::snprintf(hPosString, sizeof(hPosString), "Player hp: %d / %d", currentHP, maxHP);
+	Renderer::Get().Submit(hPosString, Vector2(8, 17));
 }
 
 void Player::StopParry()
@@ -189,6 +211,24 @@ void Player::StopParry()
 
 	// 패링 시간도 초기화.
 	parryTimer.Reset();
+}
+
+Vector2 Player::GetProgressBarPosition() const
+{
+	//int xPosition = 5;
+
+	int xPosition = Engine::Get().GetWidth() / 2 - 8;
+	int yPosition = Engine::Get().GetHeight() - 3;
+	return Vector2(xPosition, yPosition);
+}
+
+Vector2 Player::GetHealthPointBarPosition() const
+{
+	//int xPosition = 5;
+
+	int xPosition = Engine::Get().GetWidth() / 2 - 8;
+	int yPosition = Engine::Get().GetHeight() - 2;
+	return Vector2(xPosition, yPosition);
 }
 
 void Player::StartParry(int dir)
@@ -230,7 +270,6 @@ void Player::StartParry(int dir)
 	// 액터 생성.
 	GetOwner()->AddNewActor(new PlayerBullet(bulletPosition));
 }
-
 //void Player::AddPlayerProgressBar()
 //{
 //    // ProgressBar는 타입 이름이므로, 인스턴스를 생성해야 합니다.

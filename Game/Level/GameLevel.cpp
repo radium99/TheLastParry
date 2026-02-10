@@ -131,8 +131,8 @@ void GameLevel::ProcessCollisionParryingAndEnemy()
 			if (parrying->TestIntersect(enemy))
 			{
 				ProcessParry(parrying, enemy, player);
-				enemy->OnDamaged(100); // 기존 enemy->OnDamaged();
-				
+				//enemy->OnDamaged(100); // 기존 enemy->OnDamaged();
+
 				// 페링 시스템을 넣었다면(Perfect, good, bad) 페링모션 자체는 없어지면 안될 것 같다고 판단.
 				//parry->Destroy();
 
@@ -222,15 +222,21 @@ void GameLevel::ProcessCollisionEnemyAndPlayer()
 	{
 		if (enemy->TestIntersect(player))
 		{
-			// 플레이어 죽음 설정.
-			isPlayerDead = true;
-
-			// 죽은 위치 저장.
-			playerDeadPosition = player->GetPosition();
-
-			// 액터 제거 처리.
-			player->Destroy();
 			enemy->Destroy();
+			player->TakeHealthPointDamage(50);
+
+			if (player->GetCurrentHealthPoint() <= 0)
+			{
+				// 플레이어 죽음 설정.
+				isPlayerDead = true;
+
+				// 죽은 위치 저장.
+				playerDeadPosition = player->GetPosition();
+
+				// 액터 제거 처리.
+				player->Destroy();
+			}
+
 			break;
 		}
 	}

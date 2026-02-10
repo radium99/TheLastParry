@@ -4,10 +4,10 @@
 // 효과 재생에 사용할 문자열 시퀀스 (일종의 애니메이션 프레임).
 static const EnemyDestroyEffect::EffectFrame sequence[] =
 {
-	EnemyDestroyEffect::EffectFrame("  @  ", 0.08f, Color::Red),
-	EnemyDestroyEffect::EffectFrame(" @@  ", 0.08f, Color::Blue),
-	EnemyDestroyEffect::EffectFrame(" @@@ ", 0.08f, Color::Green),
-	EnemyDestroyEffect::EffectFrame("@@@@ ", 0.08f, Color::Red),
+	EnemyDestroyEffect::EffectFrame("  @  ", 0.08f, Color::White),
+	EnemyDestroyEffect::EffectFrame(" @ @  ", 0.08f, Color::White),
+	EnemyDestroyEffect::EffectFrame("@   @ ", 0.08f, Color::White),
+	EnemyDestroyEffect::EffectFrame(" @@@ ", 0.08f, Color::White),
 	EnemyDestroyEffect::EffectFrame("  +1 ", 0.5f, Color::Green)
 };
 
@@ -29,6 +29,8 @@ EnemyDestroyEffect::EnemyDestroyEffect(const Vector2& position)
 
 	// 색상 설정.
 	color = sequence[0].color;
+
+	sortingOrder = 0;
 }
 
 void EnemyDestroyEffect::Tick(float deltaTime)

@@ -7,17 +7,17 @@
 // 여기에서 static은 private.
 static const char* enemyType[] =
 {
-	";:^:;",
-	"zZwZz",
-	"oO@Oo",
-	"<-=->",
-	")qOp(",
+	"w('J')/",
+	"z(*O*)/",
+	"o(O@O)/",
+	"z(#x#)/",
+	"w(`W`)/"
 };
 
 EnemySpawner::EnemySpawner()
 {
 	// 적 생성 타이머 설정.
-	timer.SetTargetTime(Util::RandomRange(1.0f, 1.1f));
+	timer.SetTargetTime(spawnInterval);
 }
 
 void EnemySpawner::Tick(float deltaTime)

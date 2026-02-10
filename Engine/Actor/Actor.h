@@ -93,7 +93,7 @@ namespace Wanted
 		Level* owner = nullptr;
 
 		// 그리기 우선 순위 (값이 크면 우선순위가 높음).
-		int sortingOrder = 0;
+		int sortingOrder = 100;
 
 		// 위치.
 		Vector2 position;

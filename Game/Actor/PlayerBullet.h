@@ -28,6 +28,6 @@ private:
 
 	Timer timer;
 
-	float lifeTime = 1.0f;
+	float lifeTime = 0.6f;
 };
 

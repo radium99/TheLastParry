@@ -38,7 +38,7 @@ namespace Wanted
 
 		string = new char[128];
 		memset(string, 0, sizeof(char) * 128);
-		sprintf_s(string, 128, "(%f, %f)", x, y);
+		sprintf_s(string, 128, "(%d, %d)", x, y);
 
 		return string;
 	}
@@ -72,18 +72,6 @@ namespace Wanted
 		return coord;
 	}
 	
-	//void Vector2::ChangeToUnitVector()
-	//{
-	//	// 아래 두 녀석을 float로 받으면 플레이억 좌우로 흔들림.
-	//	float distanceSquare = x*x + y*y;	// 방향벡터 타겟(x, y), 플레이어(a,b)  => (x-a)^2, (y - b)^2
-	//	float len = sqrtf(distanceSquare); // 거리구함.
-
-	//	if (len != 0.0f)
-	//	{
-	//		x =	x / len;
-	//		y =	y / len;
-	//	}
-	//}
 	Vector2 Vector2::operator*(const int other) const
 	{
 		return Vector2(x * other, y* other);

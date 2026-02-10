@@ -1,7 +1,7 @@
 #include "PlayerBullet.h"
 
 PlayerBullet::PlayerBullet(const Vector2& position)
-	: super("@", position, Color::Blue),
+	: super("*", position, Color::Yellow),
 	yPosition(static_cast<float>(position.y))
 {
 	timer.SetTargetTime(lifeTime); // 패링 최대 지속 시간 설정.
